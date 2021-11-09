@@ -6,8 +6,7 @@ const fs = require('fs');
 const app = express();
 
 const Usuario = require('../models/usuario');
-const Libro = require('../models/libro');
-const Autor = require('../models/autor');
+
 
 app.use(fileUpload());
 
@@ -48,17 +47,12 @@ app.put('/upload/:ruta/:id', (req, res) => { //ruta de la coleccion y el id
     });
 
     switch (ruta) { //actualizar una coleccion
-        case 'libro':
-
-            imagenLibro(id, res, nombre);
-            break;
+        
         case 'usuario':
             imagenUsuario(id, res, nombre);
             break;
 
-        case 'autor':
-            imagenAutor(id, res, nombre);
-            break;
+       
         default:
             return res.status(400).json({
                 ok: false,
@@ -108,79 +102,6 @@ function imagenUsuario(id, res, nombreImagen) { //para actualizar el modelo de u
     });
 }
 
-
-function imagenLibro(id, res, nombreImagen) { //para actualizar el modelo de producto, relaciona el nombre de la imagen con una collecion
-    Libro.findById(id, (err, libros) => {
-        if (err) {
-            borrarArchivo(nombreImagen, 'libro');
-            return res.status(400).json({ //consulta que haya un error
-                ok: false,
-                err
-            });
-        }
-        if (!libros) {
-            borrarArchivo(nombreImagen, 'libro');
-            return res.status(400).json({ //si no hay resultados en la consulta
-                ok: false,
-                err: {
-                    message: 'Libro no existe'
-                }
-            });
-        }
-        libros.img = nombreImagen;
-
-        libros.save((err, libroDB) => { //save al paso 
-            if (err) {
-                borrarArchivo(nombreImagen, 'libro');
-                return res.status(400).json({ //consulta que haya un error
-                    ok: false,
-                    err
-                });
-            }
-            return res.status(200).json({
-                ok: true,
-                libroDB
-            });
-        });
-    });
-}
-
-function imagenAutor(id, res, nombreImagen) { //para actualizar el modelo de autor
-    Autor.findById(id, (err, autores) => {
-        if (err) {
-            borrarArchivo(nombreImagen, 'autor');
-
-            return res.status(400).json({ //consulta que haya un error
-                ok: false,
-                err
-            });
-        }
-        if (!autores) {
-            borrarArchivo(nombreImagen, 'autor');
-            return res.status(400).json({ //si no hay resultados en la consulta /autor
-                ok: false,
-                err: {
-                    message: 'Autor no existe'
-                }
-            });
-        }
-        autores.img = nombreImagen;
-
-        autores.save((err, autorDB) => { //save al paso 
-            if (err) {
-                borrarArchivo(nombreImagen, 'autor');
-                return res.status(400).json({ //consulta que haya un error
-                    ok: false,
-                    err
-                });
-            }
-            return res.status(200).json({
-                ok: true,
-                autorDB
-            });
-        });
-    });
-}
 
 function borrarArchivo(nombreImagen, ruta) {
     let pathImg = path.resolve(__dirname, `../../uploads/${ruta}/${nombreImagen}`);
