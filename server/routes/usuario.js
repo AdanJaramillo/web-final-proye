@@ -6,7 +6,7 @@ const app = express();
 
 const Usuario = require('../models/usuario');
 
-app.get('/usuario', [verificaToken], (req, res) => { //podemos poner mas middleware solamente separando por comas y poniendolos entre corchete
+app.get('/usuario', (req, res) => { //podemos poner mas middleware solamente separando por comas y poniendolos entre corchete
     // let desde = req.params.desde || 0;
     // desde = Number(desde);
 
